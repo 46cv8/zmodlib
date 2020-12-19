@@ -12,7 +12,7 @@
 #define  _ZMODDAC1411_H
 
 //#define ZmodDAC1411_MAX_BUFFER_LEN	0x3FFF	// maximum buffer length supported by ZmodDAC1411 IP
-#define ZmodDAC1411_MAX_BUFFER_LEN	0xFFFF	// maximum buffer length supported by ZmodDAC1411 IP
+#define ZmodDAC1411_MAX_BUFFER_LEN	0x1FFFF	// maximum buffer length supported by ZmodDAC1411 IP
 
 
 /**
