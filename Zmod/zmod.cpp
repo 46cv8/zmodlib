@@ -22,7 +22,11 @@ void fnZmodInterruptHandler(void *data);
  *  can be found by either looking in the device tree files on a Linux
  *  platform, or the xparameters.h file on a baremetal platform,
  *  or in Vivado's Address Editor tab.
- * @param dmaAddress the base address of the DMA device,
+ * @param dmaCh1Address the base address of the Ch1 DMA device,
+ *  can be found by either looking in the device tree files on a Linux
+ *  platform, or the xparameters.h file on a baremetal platform,
+ *  or in Vivado's Address Editor tab.
+ * @param dmaCh2Address the base address of the Ch2 DMA device,
  *  can be found by either looking in the device tree files on a Linux
  *  platform, or the xparameters.h file on a baremetal platform,
  *  or in Vivado's Address Editor tab.
@@ -40,19 +44,22 @@ void fnZmodInterruptHandler(void *data);
  * @param zmodInterrupt the interrupt number of the ZMOD device,
  *  can be found by looking at the xparameters.h file on a baremental
  *  platform, and is irrelevant on a Linux platform.
- * @param dmaInterrupt the interrupt number of the DMA device,
+ * @param dmaCh1Interrupt the interrupt number of the Ch1 DMA device,
+ *  can be found by looking at the xparameters.h file on a baremental
+ *  platform, and is irrelevant on a Linux platform.
+ * @param dmaCh2Interrupt the interrupt number of the Ch2 DMA device,
  *  can be found by looking at the xparameters.h file on a baremental
  *  platform, and is irrelevant on a Linux platform.
  */
-ZMOD::ZMOD(uintptr_t baseAddress, uintptr_t dmaAddress, uintptr_t iicAddress, uintptr_t flashAddress,
-		enum dma_direction direction, int zmodInterrupt, int dmaInterrupt) {
+ZMOD::ZMOD(uintptr_t baseAddress, uintptr_t dmaCh1Address, uintptr_t dmaCh2Address, uintptr_t iicAddress, uintptr_t flashAddress,
+		enum dma_direction direction, int zmodInterrupt, int dmaCh1Interrupt, int dmaCh2Interrupt) {
 	baseAddr = fnInitZmod(baseAddress,
 			zmodInterrupt, (void *)fnZmodInterruptHandler, (void *)this);
-	dmaAddr = fnInitDMA(dmaAddress, direction, dmaInterrupt);
+	dmaAddr[0] = fnInitDMA(dmaCh1Address, direction, dmaCh1Interrupt);
+	dmaAddr[1] = fnInitDMA(dmaCh2Address, direction, dmaCh2Interrupt);
 	flashAddr = fnInitFlash(iicAddress, flashAddress);
 
 	this->direction = direction;
-	transferSize = 0;
 	calib = 0;	// this will be later allocated by allocCalib
 
 	// toggle reset bit
@@ -66,7 +73,8 @@ ZMOD::ZMOD(uintptr_t baseAddress, uintptr_t dmaAddress, uintptr_t iicAddress, ui
 */
 ZMOD::~ZMOD() {
 	fnDestroyZmod(baseAddr);
-	fnDestroyDMA(dmaAddr);
+	fnDestroyDMA(dmaAddr[0]);
+	fnDestroyDMA(dmaAddr[1]);
 	fnDestroyFlash(flashAddr);
 	if(calib)
 	{
@@ -215,61 +223,53 @@ void ZMOD::processInterrupt(){
 /**
  * Allocate a DMA buffer.
  *
+ * @param channel the channel: 0 for channel 1, 1 for channel 2
  * @param size the size of the DMA buffer, in bytes
  *
  * @return the address of the DMA buffer
  */
-void* ZMOD::allocDMABuffer(size_t size) {
-	return fnAllocBuffer(dmaAddr, size);
+void* ZMOD::allocDMABuffer(uint8_t channel, size_t size) {
+	return fnAllocBuffer(dmaAddr[channel], size);
 }
 
 /**
  * Free a DMA buffer.
  *
+ * @param channel the channel: 0 for channel 1, 1 for channel 2
  * @param buf the address of the DMA buffer
  * @param size the size of the DMA buffer
  */
-void ZMOD::freeDMABuffer(uint32_t *buf, size_t size) {
-	return fnFreeBuffer(dmaAddr, buf, size);
+void ZMOD::freeDMABuffer(uint8_t channel, uint16_t *buf, size_t size) {
+	return fnFreeBuffer(dmaAddr[channel], buf, size);
 }
 
 /**
- * Set the length (in bytes) of a transfer.
+ * Start a DMA transfer.
  *
- * @param size the length of the transfer in number of bytes to be
- *  transfered
- */
-void ZMOD::setTransferSize(size_t size) {
-	transferSize = size;
-	if (direction == DMA_DIRECTION_RX) {
-		writeRegFld(ZMOD_REGFLD_AXIS_S2MM_LENGTH_LENGTH, transferSize);
-	} else {
-		writeRegFld(ZMOD_REGFLD_AXIS_MM2S_LENGTH_LENGTH, transferSize);
-	}
-
-}
-
-/**
- * Start a DMA transfer using the transfer length configured previously.
+ * @param channel the channel: 0 for channel 1, 1 for channel 2
+ * @param buffer the address of the DMA buffer
+ * @param size the size of the transfer
  *
  * @return 0 on success, any other number on failure
  */
-int ZMOD::startDMATransfer(uint32_t* buffer) {
+int ZMOD::startDMATransfer(uint8_t channel, uint16_t* buffer, size_t transferSize) {
 	// transfer length is not configured
 	if (transferSize < 1) {
 		return ERR_FAIL;
 	}
 
-	return fnOneWayDMATransfer(dmaAddr, buffer, transferSize);
+	return fnOneWayDMATransfer(dmaAddr[channel], buffer, transferSize);
 }
 
 /**
  * Check if the DMA transfer previously started has completed.
  *
+ * @param channel the channel: 0 for channel 1, 1 for channel 2
+ *
  * @return true if the DMA transfer completed, false if it is still running
  */
-bool ZMOD::isDMATransferComplete() {
-	return fnIsDMATransferComplete(dmaAddr);
+bool ZMOD::isDMATransferComplete(uint8_t channel) {
+	return fnIsDMATransferComplete(dmaAddr[channel]);
 }
 
 /**

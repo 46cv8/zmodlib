@@ -52,9 +52,8 @@
 class ZMOD {
 protected:
 	uintptr_t 	baseAddr; ///< Zmod base address
-	uintptr_t 	dmaAddr; ///< DMA environment pointer
+	uintptr_t 	dmaAddr[2]; ///< DMA environment pointer
 	uintptr_t 	flashAddr; ///< Flash  base address
-	size_t	transferSize; ///< DMA transfer size
 	uint8_t *calib; ///< pointer to calibration data
 	uint32_t calibSize; ///< calibration size
 	uint16_t userCalibAddr; ///< address of user calibration area
@@ -62,13 +61,13 @@ protected:
 	uint8_t calibID; ///< calibration ID
 	enum dma_direction direction; ///< DMA tranfer direction
 	int initCalib(uint32_t calibSize, uint8_t calibID, uint32_t userCalibAddr,uint32_t factCalibAddr);
-	void* allocDMABuffer(size_t size);
-	void freeDMABuffer(uint32_t *buf, size_t size);
+	void* allocDMABuffer(uint8_t channel, size_t size);
+	void freeDMABuffer(uint8_t channel, uint16_t *buf, size_t size);
 	uint8_t computeCRC(uint8_t *pData, uint32_t len);
 
 public:
-	ZMOD(uintptr_t baseAddress, uintptr_t dmaAddress, uintptr_t iicAddress, uintptr_t flashAddress,
-			enum dma_direction direction, int zmodInterrupt, int dmaInterrupt);
+	ZMOD(uintptr_t baseAddress, uintptr_t dmaCh1Address, uintptr_t dmaCh2Address, uintptr_t iicAddress, uintptr_t flashAddress,
+			enum dma_direction direction, int zmodInterrupt, int dmaCh1Interrupt, int dmaCh2Interrupt);
 	~ZMOD();
 
 	void writeReg(uint8_t regAddr, uint32_t value);
@@ -79,9 +78,8 @@ public:
 	void writeSignedRegFld(uint8_t regAddr, uint8_t lsbBit, uint8_t noBits, int32_t value);
 	int32_t readSignedRegFld(uint8_t regAddr, uint8_t lsbBit, uint8_t noBits);
 
-	void setTransferSize(size_t size);
-	int startDMATransfer(uint32_t* buffer);
-	bool isDMATransferComplete();
+	int startDMATransfer(uint8_t channel, uint16_t* buffer, size_t transferSize);
+	bool isDMATransferComplete(uint8_t channel);
 
 	void sendCommand(uint32_t command);
 	uint32_t receiveCommand();

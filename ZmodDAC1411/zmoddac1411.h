@@ -11,8 +11,7 @@
 #ifndef _ZMODDAC1411_H
 #define  _ZMODDAC1411_H
 
-//#define ZmodDAC1411_MAX_BUFFER_LEN	0x3FFF	// maximum buffer length supported by ZmodDAC1411 IP
-#define ZmodDAC1411_MAX_BUFFER_LEN	0x1FFFF	// maximum buffer length supported by ZmodDAC1411 IP
+#define ZmodDAC1411_MAX_BUFFER_LEN	0x10000000	// maximum buffer length due to ram considerations
 
 
 /**
@@ -76,15 +75,13 @@ private:
 protected:
 
 public:
-	ZMODDAC1411(uintptr_t baseAddress, uintptr_t dmaAddress, uintptr_t iicAddress, uintptr_t flashAddress, int dmaInterrupt);
+	ZMODDAC1411(uintptr_t baseAddress, uintptr_t dmaCh1Address, uintptr_t dmaCh2Address, uintptr_t iicAddress, uintptr_t flashAddress, int dmaCh1Interrupt, int dmaCh2Interrupt);
 
-	uint32_t* allocChannelsBuffer(size_t &length);
-	void freeChannelsBuffer(uint32_t *buf, size_t length);
-	uint32_t arrangeChannelData(uint8_t channel, uint16_t data);
-	uint32_t arrangeSignedChannelData(uint8_t channel, int16_t data);
+	uint16_t* allocBuffer(uint8_t channel, size_t &length);
+	void freeBuffer(uint8_t channel, uint16_t *buf, size_t length);
 
 	void setOutputSampleFrequencyDivider(uint16_t val);
-	uint8_t setData(uint32_t* buffer, size_t &length);
+	uint8_t setData(uint8_t channel, uint16_t* buffer, size_t &length);
 	void setGain(uint8_t channel, uint8_t gain);
 
 	void start();
@@ -98,7 +95,7 @@ public:
 	int readUserCalib() override;
 	void setCalibValues(uint8_t channel, uint8_t gain, float valG, float valA);
 
-	int32_t getSignedRawFromVolt(float voltValue, uint8_t gain);
+	uint16_t getSignedRawFromVolt(float voltValue, uint8_t gain);
 };
 
 #endif

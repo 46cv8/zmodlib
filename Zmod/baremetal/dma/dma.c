@@ -285,7 +285,7 @@ void fnDestroyDMA(uintptr_t addr) {
  *
  * @return 0 on success, any other number on failure
  */
-int fnOneWayDMATransfer(uintptr_t addr, uint32_t *buf, size_t transfer_size){
+int fnOneWayDMATransfer(uintptr_t addr, uint16_t *buf, size_t transfer_size){
 	DMAEnv *dmaEnv = (DMAEnv *)addr;
 	if (!dmaEnv)
 		return -1;

@@ -22,7 +22,7 @@ enum dma_direction {
 
 uint32_t fnInitDMA(uintptr_t addr, enum dma_direction direction, int dmaInterrupt);
 void fnDestroyDMA(uintptr_t addr);
-int fnOneWayDMATransfer(uintptr_t addr, uint32_t *buf, size_t length);
+int fnOneWayDMATransfer(uintptr_t addr, uint16_t *buf, size_t length);
 uint8_t fnIsDMATransferComplete(uintptr_t addr);
 void* fnAllocBuffer(uintptr_t addr, size_t size);
 void fnFreeBuffer(uintptr_t addr, void *buf, size_t size);

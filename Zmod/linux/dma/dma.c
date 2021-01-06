@@ -54,7 +54,7 @@ void fnDMAInterruptHandler(int channel_id, void *data)
  *
  * @return 0 on success, any other number on failure
  */
-int fnOneWayDMATransfer(uintptr_t addr, uint32_t *buf, size_t transfer_size)
+int fnOneWayDMATransfer(uintptr_t addr, uint16_t *buf, size_t transfer_size)
 {
 	DMAEnv *dma_env = (DMAEnv *)addr;
 	if (!dma_env)
