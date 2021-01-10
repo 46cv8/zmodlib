@@ -33,7 +33,7 @@
 #define ZMODDAC1411_REGFLD_CR_DAC_EN 			ZMOD_REG_ADDR_CR,  4,  1	///< DAC_EN  			field of CR register
 #define ZMODDAC1411_REGFLD_CR_TEST_MODE			ZMOD_REG_ADDR_CR,  5,  1	///< TEST_MODE	field of CR register
 #define ZMODDAC1411_REGFLD_CR_OUT_ADDR_CNT_RST	ZMOD_REG_ADDR_CR,  6,  1	///< OUT_ADDR_CNT_RST	field of CR register
-#define ZMODDAC1411_REGFLD_CR_DIV_RATE  		ZMOD_REG_ADDR_CR, 16, 14	///< DIV_RATE 		field of CR register
+#define ZMODDAC1411_REGFLD_CR_DIV_RATE  		ZMOD_REG_ADDR_CR, 10, 20	///< DIV_RATE 		field of CR register
 #define ZMODDAC1411_REGFLD_SR_BUF_FULL			ZMOD_REG_ADDR_SR, 21,  1	///< BUF_FULL 		field of SR register
 #define ZMODDAC1411_REGFLD_IER_BUF_FULL			ZMOD_REG_ADDR_IER, 21, 1	///< BUF_FULL 		field of IER register
 #define ZMODDAC1411_REGFLD_TRIG_SC1_HG_LG		ZMODDAC1411_REG_ADDR_TRIG, 21, 1	///< SC1_HG_LG 	field of TRIG register
@@ -80,7 +80,7 @@ public:
 	uint16_t* allocBuffer(uint8_t channel, size_t &length);
 	void freeBuffer(uint8_t channel, uint16_t *buf, size_t length);
 
-	void setOutputSampleFrequencyDivider(uint16_t val);
+	void setOutputSampleFrequencyDivider(uint32_t val);
 	uint8_t setData(uint8_t channel, uint16_t* buffer, size_t &length);
 	void setGain(uint8_t channel, uint8_t gain);
 

@@ -141,7 +141,7 @@ void ZMODDAC1411::stop()
 * Set the 14 bits output sample frequency divider.
 *
 */
-void ZMODDAC1411::setOutputSampleFrequencyDivider(uint16_t val)
+void ZMODDAC1411::setOutputSampleFrequencyDivider(uint32_t val)
 {
 	writeRegFld(ZMODDAC1411_REGFLD_CR_DIV_RATE, val);
 }
