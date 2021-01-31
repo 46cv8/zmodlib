@@ -138,13 +138,51 @@ void ZMODDAC1411::stop()
 }
 
 /**
-* Set the 14 bits output sample frequency divider.
+* Set the 20 bits output sample frequency divider.
 *
 */
-void ZMODDAC1411::setOutputSampleFrequencyDivider(uint32_t val)
+void ZMODDAC1411::setOutputSampleFrequencyDivider(uint8_t channel, uint32_t val)
 {
-	writeRegFld(ZMODDAC1411_REGFLD_CR_DIV_RATE, val);
+	if (channel)
+	{
+		writeRegFld(ZMODDAC1411_REGFLD_SC2_CR_DIV_RATE, val);
+	}
+	else
+	{
+		writeRegFld(ZMODDAC1411_REGFLD_SC1_CR_DIV_RATE, val);
+	}
 }
+
+/**
+* Set the interpolate bit for the sample frequency divider.
+*
+*/
+void ZMODDAC1411::setInterpolateForFrequencyDivider(uint8_t channel, bool val)
+{
+	if (channel)
+	{
+		if (val)
+		{
+			writeRegFld(ZMODDAC1411_REGFLD_SC2_CR_DIV_INTRPLT, 1);
+		}
+		else
+		{
+			writeRegFld(ZMODDAC1411_REGFLD_SC2_CR_DIV_INTRPLT, 0);
+		}
+	}
+	else
+	{
+		if (val)
+		{
+			writeRegFld(ZMODDAC1411_REGFLD_SC1_CR_DIV_INTRPLT, 1);
+		}
+		else
+		{
+			writeRegFld(ZMODDAC1411_REGFLD_SC1_CR_DIV_INTRPLT, 0);
+		}
+	}
+}
+
 /**
  * Call when a ZMOD interrupt occurs.
  */

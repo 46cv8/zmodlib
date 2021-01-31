@@ -79,6 +79,7 @@ public:
 	int32_t readSignedRegFld(uint8_t regAddr, uint8_t lsbBit, uint8_t noBits);
 
 	int startDMATransfer(uint8_t channel, uint16_t* buffer, size_t transferSize);
+	int stopDMATransfer(uint8_t channel);
 	bool isDMATransferComplete(uint8_t channel);
 
 	void sendCommand(uint32_t command);

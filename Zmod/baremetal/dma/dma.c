@@ -321,6 +321,35 @@ int fnOneWayDMATransfer(uintptr_t addr, uint16_t *buf, size_t transfer_size){
 }
 
 /**
+ * Stop a DMA transfer.
+ *
+ * @param addr the address of the DMAEnv instance returned by fnInitDMA
+ *
+ * @return 0 on success, any other number on failure
+ */
+int stopDMATransfer(uintptr_t addr, uint16_t *buf, size_t transfer_size)
+{
+	DMAEnv *dmaEnv = (DMAEnv *)addr;
+	if (!dmaEnv)
+		return -1;
+
+	dmaEnv->complete_flag = 1;
+
+	// DMA Setup
+	if (dmaEnv->direction == DMA_DIRECTION_RX) {
+		// Set DMA RX Run bit, value 1, DMA register
+		writeDMARegFld(dmaEnv->base_addr, AXIDMA_REGFLD_S2MM_DMACR_RUNSTOP, 0);
+	}
+	else
+	{
+		// Set DMA RX Run bit, value 1, DMA register
+		writeDMARegFld(dmaEnv->base_addr, AXIDMA_REGFLD_MM2S_DMACR_RUNSTOP, 0);
+	}
+
+	return 0;
+}
+
+/**
  * Check if the DMA transfer previously started has completed.
  *
  * @param addr the address of the DMAEnv instance returned by fnInitDMA

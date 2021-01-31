@@ -67,6 +67,27 @@ int fnOneWayDMATransfer(uintptr_t addr, uint16_t *buf, size_t transfer_size)
 }
 
 /**
+ * Stop a DMA transfer.
+ *
+ * @param addr the address of the DMAEnv instance returned by fnInitDMA
+ *
+ * @return 0 on success, any other number on failure
+ */
+int stopDMATransfer(uintptr_t addr, uint16_t *buf, size_t transfer_size)
+{
+	DMAEnv *dma_env = (DMAEnv *)addr;
+	if (!dma_env)
+		return -1;
+
+	dma_env->complete_flag = 1;
+
+	axidma_stop_transfer(dma_env->dma_inst, dma_env->channel_id);
+
+	return 0;
+}
+
+
+/**
  * Check if the DMA transfer previously started has completed.
  *
  * @param addr the address of the DMAEnv instance returned by fnInitDMA

@@ -262,6 +262,18 @@ int ZMOD::startDMATransfer(uint8_t channel, uint16_t* buffer, size_t transferSiz
 }
 
 /**
+ * Stop a DMA transfer.
+ *
+ * @param channel the channel: 0 for channel 1, 1 for channel 2
+ *
+ * @return 0 on success, any other number on failure
+ */
+int ZMOD::stopDMATransfer(uint8_t channel) {
+
+	return stopDMATransfer(dmaAddr[channel]);
+}
+
+/**
  * Check if the DMA transfer previously started has completed.
  *
  * @param channel the channel: 0 for channel 1, 1 for channel 2

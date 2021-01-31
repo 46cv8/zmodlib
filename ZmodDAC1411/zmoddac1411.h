@@ -26,6 +26,8 @@
 #define ZMODDAC1411_REG_ADDR_SC2LGADDCOEF	0x38	///< SC2LGADDCOEF 	register address
 #define ZMODDAC1411_REG_ADDR_SC2HGMULTCOEF	0x3C	///< SC2HGMULTCOEF 	register address
 #define ZMODDAC1411_REG_ADDR_SC2HGADDCOEF	0x40	///< SC2HGADDCOEF 	register address
+#define ZMODDAC1411_REG_ADDR_SC1_CR			0x44	///< SC1_CR 	register address
+#define ZMODDAC1411_REG_ADDR_SC2_CR			0x48	///< SC2_CR 	register address
 
 /**
  * ZMODDAC1411 specific register fields
@@ -46,6 +48,11 @@
 #define ZMODDAC1411_REGFLD_SC2HGMULTCOEF_VAL	ZMODDAC1411_REG_ADDR_SC2HGMULTCOEF, 0, 18	///< VAL field of SC2HGMULTCOEF register
 #define ZMODDAC1411_REGFLD_SC2LGADDCOEF_VAL		ZMODDAC1411_REG_ADDR_SC2LGADDCOEF, 0, 18	///< VAL field of SC2LGADDCOEF register
 #define ZMODDAC1411_REGFLD_SC2HGADDCOEF_VAL		ZMODDAC1411_REG_ADDR_SC2HGADDCOEF, 0, 18	///< VAL field of SC2HGADDCOEF register
+#define ZMODDAC1411_REGFLD_SC1_CR_DIV_RATE  	ZMODDAC1411_REG_ADDR_SC1_CR, 10, 20	///< DIV_RATE 		field of SC1 CR register
+#define ZMODDAC1411_REGFLD_SC1_CR_DIV_INTRPLT	ZMODDAC1411_REG_ADDR_SC1_CR,  9,  1	///< DIV_INTERPOLATE	field of SC1 CR register
+#define ZMODDAC1411_REGFLD_SC2_CR_DIV_RATE  	ZMODDAC1411_REG_ADDR_SC2_CR, 10, 20	///< DIV_RATE 		field of SC2 CR register
+#define ZMODDAC1411_REGFLD_SC2_CR_DIV_INTRPLT	ZMODDAC1411_REG_ADDR_SC2_CR,  9,  1	///< DIV_INTERPOLATE	field of SC2 CR register
+
 
 /**
  * ZMODDAC1411 calibration
@@ -80,7 +87,8 @@ public:
 	uint16_t* allocBuffer(uint8_t channel, size_t &length);
 	void freeBuffer(uint8_t channel, uint16_t *buf, size_t length);
 
-	void setOutputSampleFrequencyDivider(uint32_t val);
+	void setOutputSampleFrequencyDivider(uint8_t channel, uint32_t val);
+	void setInterpolateForFrequencyDivider(uint8_t channel, bool val);
 	uint8_t setData(uint8_t channel, uint16_t* buffer, size_t &length);
 	void setGain(uint8_t channel, uint8_t gain);
 
